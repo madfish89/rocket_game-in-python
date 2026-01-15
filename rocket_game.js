@@ -42,7 +42,7 @@ class Ship {
 
         // Thrust
         if (keys.ArrowUp) {
-            const thrust = 1 * VELOCITY_SCALE;
+            const thrust = 2 * VELOCITY_SCALE;
             this.vx += Math.cos(this.angle) * thrust;
             this.vy += Math.sin(this.angle) * thrust;
             this.thrusting = true;
