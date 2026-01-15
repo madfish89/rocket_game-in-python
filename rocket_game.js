@@ -1,4 +1,4 @@
-const GAME_SCALE = 0.65;
+const GAME_SCALE = 0.75;
 let VELOCITY_SCALE = 0.4; 
 const BG_STAR_COUNT = 170;
 
