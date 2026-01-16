@@ -338,12 +338,12 @@ function loop(time) {
         // Win
         if (score >= 4200) win = true;
     }
-    if (level == 1);
-        VELOCITY_SCALE = .41;
-    if (level == 2 );
-        VELOCITY_SCALE = .55;
-    if (level == 3 );
-        VELOCITY_SCALE = .7;
+    if (level == 1){
+        VELOCITY_SCALE = .41}
+    if (level == 2 ){
+        VELOCITY_SCALE = .55}
+    if (level == 3 );{
+        VELOCITY_SCALE = .71}
 
     // Draw ship
     ship.draw(ctx);
