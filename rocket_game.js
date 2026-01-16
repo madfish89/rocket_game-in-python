@@ -340,16 +340,10 @@ function loop(time) {
     }
     if (level == 1);
         VELOCITY_SCALE = .41;
-        ctx.font = `${fontSize}px Arial`;
-        ctx.fillText('Level 1');
     if (level == 2 );
         VELOCITY_SCALE = .55;
-        ctx.font = `${fontSize}px Arial`;
-        ctx.fillText('Level 2');
     if (level == 3 );
         VELOCITY_SCALE = .7;
-        ctx.font = `${fontSize}px Arial`;
-        ctx.fillText('Level 3');
 
     // Draw ship
     ship.draw(ctx);
