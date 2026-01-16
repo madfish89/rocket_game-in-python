@@ -2,7 +2,7 @@ const GAME_SCALE = 0.65;
 let VELOCITY_SCALE = 0.41;
 const BG_STAR_COUNT = 1070;
 const MAX_LEVEL = 6;
-const WIN_SCORE = 9200;
+const WIN_SCORE = 9000;
 const LEVEL_THRESHOLD = 1200;
 
 const LEVELS = [
