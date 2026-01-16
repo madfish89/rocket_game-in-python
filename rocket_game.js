@@ -259,20 +259,9 @@ document.body.appendChild(canvas);
 const ctx = canvas.getContext('2d');
 
 function resize() {
-    // Physical pixels – important for sharpness on retina / high-dpi
-    const dpr = window.devicePixelRatio || 1;
-
-    canvas.width  = innerWidth  * dpr;
-    canvas.height = innerHeight * dpr;
-
-    // Tell CSS to stretch it to full viewport
-    canvas.style.width  = innerWidth  + 'px';
-    canvas.style.height = innerHeight + 'px';
-
-    // Scale context so drawing commands still work in "CSS pixels"
-    ctx.scale(dpr, dpr);
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
 }
-
 resize();
 window.addEventListener('resize', resize);
 
