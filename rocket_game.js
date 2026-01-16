@@ -314,23 +314,25 @@ function loop(time) {
             if (lives <= 0) gameOver = true;
         }
 
-        // ─── Small trail emission ───────────────────────────────
+// ─── Bigger & denser trail ──────────────────────────────
         const backAngle = ship.angle + Math.PI;
-        const emitX = ship.shipScreenX + Math.cos(backAngle) * 18 * GAME_SCALE;
-        const emitY = ship.screenY + Math.sin(backAngle) * 18 * GAME_SCALE;
+        const emitX = ship.shipScreenX + Math.cos(backAngle) * 22 * GAME_SCALE;
+        const emitY = ship.screenY + Math.sin(backAngle) * 22 * GAME_SCALE;
 
-        const trailColor = ship.thrusting ? '#ffcc66' : '#aaccff';
-        const emitChance = ship.thrusting ? 0.95 : 0.45;
+        const trailColor = ship.thrusting ? '#ffdd88' : '#bbddff';
+        const emitChance = ship.thrusting ? 2.2 : 1.1;          // ← more particles
 
-        if (Math.random() < emitChance) {
-            const spread = 0.35;
-            const speed = Math.random() * 1.4 + 0.4;
+        for (let i = 0; i < emitChance; i++) {                  // ← loop = more per frame
+            if (Math.random() > 0.35) continue;                 // slight randomness
+
+            const spread = 0.55;                                // wider spread
+            const speed = Math.random() * 2.2 + 0.8;            // faster/longer tail
             particles.push(new Particle(
                 emitX,
                 emitY,
                 Math.cos(backAngle + (Math.random() - 0.5) * spread) * speed,
                 Math.sin(backAngle + (Math.random() - 0.5) * spread) * speed,
-                28 + Math.random() * 18,
+                38 + Math.random() * 25,                        // longer life
                 trailColor
             ));
         }
