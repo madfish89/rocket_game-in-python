@@ -242,7 +242,7 @@ function resetGame() {
         (Math.random() * 2.5 + 1) * VELOCITY_SCALE
     ]);
     particles = [];
-    score = 2400;
+    score = 5400;
     lives = 1;
     currentLevel = 1;
     VELOCITY_SCALE = 0.41;
