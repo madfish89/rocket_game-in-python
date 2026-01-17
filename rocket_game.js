@@ -210,7 +210,7 @@ class Particle {
         this.life = life;
         this.maxLife = life;
         this.color = color;
-        this.size = 3 * GAME_SCALE;
+        this.size = 3.5 * GAME_SCALE;
     }
     update() {
         this.x += this.vx;
@@ -218,7 +218,7 @@ class Particle {
         this.life--;
     }
     draw(ctx) {
-        ctx.globalAlpha = this.life / this.maxLife * 0.8;
+        ctx.globalAlpha = this.life / this.maxLife * 0.88;
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x - this.size/2, this.y - this.size/2, this.size, this.size);
         ctx.globalAlpha = 1;
