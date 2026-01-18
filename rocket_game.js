@@ -314,7 +314,7 @@ function loop(time) {
             if (lives <= 0) gameOver = true;
         }
 
-// ─── Bigger & denser trail ──────────────────────────────
+
         const backAngle = ship.angle + Math.PI;
         const emitX = ship.shipScreenX + Math.cos(backAngle) * 22 * GAME_SCALE;
         const emitY = ship.screenY + Math.sin(backAngle) * 22 * GAME_SCALE;
