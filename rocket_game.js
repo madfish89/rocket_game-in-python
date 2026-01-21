@@ -2,8 +2,8 @@ const GAME_SCALE = 0.6;
 let VELOCITY_SCALE = 0.51;
 const BG_STAR_COUNT = 1070;
 const MAX_LEVEL = 6;
-const WIN_SCORE = 3500;
-const LEVEL_THRESHOLD = 500;
+const WIN_SCORE = 4200;
+const LEVEL_THRESHOLD = 700;
 const bg1 = new Audio('1.mp3');
 const bg2 = new Audio('2.mp3');
 const bg3 = new Audio('3.mp3');
@@ -14,7 +14,7 @@ const bg6 = new Audio('6.mp3');
 const backgroundMusic = [bg1, bg2, bg3, bg4]; // only levels 1-4 have music
 backgroundMusic.forEach(track => { if (track) track.loop = true; });
 
-let hasStartedThrust = false; // tracks first thrust for level 1 music
+let hasStartedThrust = false; 
 
 function play1() {
     win1.currentTime = 0;
@@ -83,7 +83,7 @@ class Ship {
     }
 
     update(keys) {
-        const rotSpeed = 0.2;
+        const rotSpeed = 0.167;
         if (keys.ArrowLeft) this.angle -= rotSpeed;
         if (keys.ArrowRight) this.angle += rotSpeed;
 
