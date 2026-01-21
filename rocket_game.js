@@ -1,5 +1,5 @@
 const GAME_SCALE = 0.6;
-let VELOCITY_SCALE = 0.41;
+let VELOCITY_SCALE = 0.51;
 const BG_STAR_COUNT = 1070;
 const MAX_LEVEL = 6;
 const WIN_SCORE = 3500;
@@ -111,7 +111,7 @@ class Ship {
         this.vx *= 0.991;
         this.vy *= 0.991;
 
-        const maxSpeed = 15 * VELOCITY_SCALE;
+        const maxSpeed = 20 * VELOCITY_SCALE;
         this.vx = Math.max(-maxSpeed, Math.min(maxSpeed, this.vx));
         this.vy = Math.max(-maxSpeed, Math.min(maxSpeed, this.vy));
 
