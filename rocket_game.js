@@ -4,6 +4,42 @@ const BG_STAR_COUNT = 1070;
 const MAX_LEVEL = 6;
 const WIN_SCORE = 9000;
 const LEVEL_THRESHOLD = 1200;
+const bg1 = new Audio('1.mp3');
+const bg2 = new Audio('2.mp3');
+const bg3 = new Audio('3.mp3');
+const bg4 = new Audio('4.mp3');
+const bg5 = new Audio('5.mp3');
+const bg6 = new Audio('6.mp3');
+
+const backgroundMusic = [bg1, bg2, bg3, bg4]; // only levels 1-4 have music
+backgroundMusic.forEach(track => { if (track) track.loop = true; });
+
+let hasStartedThrust = false; // tracks first thrust for level 1 music
+
+function play1() {
+    win1.currentTime = 0;
+    win1.play().catch(error => console.log(' failed:', error));
+}
+function play2() {
+    win2.currentTime = 0;
+    win2.play().catch(error => console.log(' failed:', error));
+}
+function play3() {
+    win3.currentTime = 0;
+    win3.play().catch(error => console.log(' failed:', error));
+}
+function play4() {
+    win4.currentTime = 0;
+    win4.play().catch(error => console.log(' failed:', error));
+}
+function play5() {
+    win5.currentTime = 0;
+    win5.play().catch(error => console.log(' failed:', error));
+}
+function play6() {
+    win6.currentTime = 0;
+    win6.play().catch(error => console.log(' failed:', error));
+}
 
 const LEVELS = [
     { name: '', obsOuter: 'green', obsInner: '#c80000', starColor: 'white', bgStarColor: 'white' },
@@ -56,6 +92,17 @@ class Ship {
             this.vx += Math.cos(this.angle) * thrust;
             this.vy += Math.sin(this.angle) * thrust;
             this.thrusting = true;
+
+            // Start level 1 music on first thrust
+            if (currentLevel === 1 && !hasStartedThrust) {
+                hasStartedThrust = true;
+                backgroundMusic.forEach(t => { if (t && !t.paused) t.pause(); });
+                const track = backgroundMusic[0];
+                if (track) {
+                    track.currentTime = 0;
+                    track.play().catch(err => console.log("Audio play failed:", err));
+                }
+            }
         } else {
             this.thrusting = false;
         }
@@ -198,7 +245,6 @@ class Obstacle {
     }
 }
 
-
 let particles = [];
 
 class Particle {
@@ -252,6 +298,7 @@ function resetGame() {
     win = false;
     paused = false;
     gameRunning = true;
+    hasStartedThrust = false; // reset for new game
 }
 
 const canvas = document.createElement('canvas');
@@ -271,6 +318,16 @@ window.addEventListener('keydown', e => {
     keys[e.key] = true;
     if (paused && e.key === ' ') {
         paused = false;
+
+        // Switch music for levels 2-4 when continuing
+        if (currentLevel >= 2 && currentLevel <= 4) {
+            backgroundMusic.forEach(t => { if (t && !t.paused) t.pause(); });
+            const track = backgroundMusic[currentLevel - 1];
+            if (track) {
+                track.currentTime = 0;
+                track.play().catch(err => console.log("Audio play failed:", err));
+            }
+        }
     }
     if ((gameOver || win) && e.key.toLowerCase() === 'r') {
         resetGame();
@@ -320,19 +377,19 @@ function loop(time) {
         const emitY = ship.screenY + Math.sin(backAngle) * 22 * GAME_SCALE;
 
         const trailColor = ship.thrusting ? '#ffdd88' : '#bbddff';
-        const emitChance = ship.thrusting ? 2.2 : 1.1;          // ← more particles
+        const emitChance = ship.thrusting ? 2.2 : 1.1;
 
-        for (let i = 0; i < emitChance; i++) {                  // ← loop = more per frame
-            if (Math.random() > 0.35) continue;                 // slight randomness
+        for (let i = 0; i < emitChance; i++) {
+            if (Math.random() > 0.35) continue;
 
-            const spread = 0.55;                                // wider spread
-            const speed = Math.random() * 2.2 + 0.8;            // faster/longer tail
+            const spread = 0.55;
+            const speed = Math.random() * 2.2 + 0.8;
             particles.push(new Particle(
                 emitX,
                 emitY,
                 Math.cos(backAngle + (Math.random() - 0.5) * spread) * speed,
                 Math.sin(backAngle + (Math.random() - 0.5) * spread) * speed,
-                38 + Math.random() * 25,                        // longer life
+                38 + Math.random() * 25,
                 trailColor
             ));
         }
@@ -405,6 +462,7 @@ function loop(time) {
 
     ship.draw(ctx);
 
+
     const fontSize = Math.floor(canvas.height / 20 * GAME_SCALE);
     const smallFontSize = Math.floor(canvas.height / 35 * GAME_SCALE);
     const uiMarginX = 30 * GAME_SCALE;
@@ -446,6 +504,7 @@ function loop(time) {
 
     requestAnimationFrame(loop);
 }
+
 
 resetGame();
 requestAnimationFrame(loop);
