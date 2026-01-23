@@ -81,12 +81,12 @@ class Ship {
     }
 
     update(keys) {
-        const rotSpeed = 0.167;
+        const rotSpeed = 0.12;
         if (keys.ArrowLeft) this.angle -= rotSpeed;
         if (keys.ArrowRight) this.angle += rotSpeed;
 
         if (keys.ArrowUp) {
-            const thrust = 0.6;
+            const thrust = 0.4;
             this.vx += Math.cos(this.angle) * thrust;
             this.vy += Math.sin(this.angle) * thrust;
             this.thrusting = true;
@@ -109,7 +109,7 @@ class Ship {
         this.vx *= 0.991;
         this.vy *= 0.991;
 
-        const maxSpeed = 20 * VELOCITY_SCALE;
+        const maxSpeed = 15 * VELOCITY_SCALE;
         this.vx = Math.max(-maxSpeed, Math.min(maxSpeed, this.vx));
         this.vy = Math.max(-maxSpeed, Math.min(maxSpeed, this.vy));
 
@@ -446,8 +446,9 @@ function loop(time) {
 
     const newLevel = Math.min(1 + Math.floor(score / LEVEL_THRESHOLD), MAX_LEVEL);
     if (newLevel > currentLevel) {
+        
         currentLevel = newLevel;
-        VELOCITY_SCALE = 0.41 + .17;
+        VELOCITY_SCALE = 0.41 + (currentLevel - 1) * 0.07;
         bgStars = Array.from({ length: BG_STAR_COUNT }, () => [
             ship.camX + canvas.width + Math.random() * canvas.width,
             Math.random() * canvas.height,
