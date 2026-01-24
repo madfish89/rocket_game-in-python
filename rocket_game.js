@@ -442,31 +442,31 @@ function loop(time) {
             }
             if (currentLevel === 2) {
                 if (!obs.update(ship.camX, obsSpeed)) {
-                    score += 10;
+                    score += 15;
                     return false;
                 }
             }
             if (currentLevel === 3) {
                 if (!obs.update(ship.camX, obsSpeed)) {
-                    score += 9;
+                    score += 12;
                     return false;
                 }
             }
             if (currentLevel === 4) {
                 if (!obs.update(ship.camX, obsSpeed)) {
-                    score += 8;
+                    score += 10;
                     return false;
                 }
             }
             if (currentLevel === 5) {
                 if (!obs.update(ship.camX, obsSpeed)) {
-                    score += 7;
+                    score += 8;
                     return false;
                 }
             }
             if (currentLevel === 6) {
                 if (!obs.update(ship.camX, obsSpeed)) {
-                    score += 5;
+                    score += 6;
                     return false;
                 }
             }
