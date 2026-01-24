@@ -50,7 +50,7 @@ const LEVELS = [
 
 class Ship {
     constructor() {
-        this.worldX = innerWidth / 1.8;
+        this.worldX = innerWidth / 2;
         this.screenY = innerHeight / 2;
         this.camX = 0;
         this.shipScreenX = 0;
