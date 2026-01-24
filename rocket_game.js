@@ -12,7 +12,7 @@ const bg4 = new Audio('4.mp3');
 const backgroundMusic = [bg1, bg2, bg3, bg4];
 backgroundMusic.forEach(track => { if (track) track.loop = true; });
 
-let hasStartedThrust = false; 
+let hasStartedThrust = false;
 
 function play1() {
     win1.currentTime = 0;
@@ -264,7 +264,7 @@ class Particle {
     draw(ctx) {
         ctx.globalAlpha = this.life / this.maxLife * 0.88;
         ctx.fillStyle = this.color;
-        ctx.fillRect(this.x - this.size/2, this.y - this.size/2, this.size, this.size);
+        ctx.fillRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
         ctx.globalAlpha = 1;
     }
 }
@@ -410,9 +410,17 @@ function loop(time) {
 
         const obsSpeed = (4.8 + currentLevel * 1.7) * VELOCITY_SCALE;
         obstacles = obstacles.filter(obs => {
-            if (!obs.update(ship.camX, obsSpeed)) {
-                score += 20;
-                return false;
+            if (currentLevel == 1) {
+                if (!obs.update(ship.camX, obsSpeed)) {
+                    score += 20;
+                    return false;
+                }
+            }
+            if (currentLevel > 1.1) {
+                if (!obs.update(ship.camX, obsSpeed)) {
+                    score += 10;
+                    return false;
+                }
             }
             if (obs.collidesWith(ship)) {
                 lives--;
@@ -446,7 +454,7 @@ function loop(time) {
 
     const newLevel = Math.min(1 + Math.floor(score / LEVEL_THRESHOLD), MAX_LEVEL);
     if (newLevel > currentLevel) {
-        
+
         currentLevel = newLevel;
         VELOCITY_SCALE = 0.41 + (currentLevel - 1) * 0.07;
         bgStars = Array.from({ length: BG_STAR_COUNT }, () => [
