@@ -294,7 +294,7 @@ function resetGame() {
     gameRunning = true;
     hasStartedThrust = false; 
     if (currentLevel > 1.1){
-        score = currentLevel * LEVEL_THRESHOLD;
+        score = (currentLevel - 1) * LEVEL_THRESHOLD;
     }
     if (currentLevel === 1 ){
         score = 0;
