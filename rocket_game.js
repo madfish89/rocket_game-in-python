@@ -428,7 +428,7 @@ function loop(time) {
 
         const obsSpeed = (4.8 + currentLevel * 1.7) * VELOCITY_SCALE;
         obstacles = obstacles.filter(obs => {
-            if (currentLevel == 1) {
+            if (currentLevel === 1) {
                 if (!obs.update(ship.camX, obsSpeed)) {
                     score += 20;
                     return false;
@@ -453,16 +453,41 @@ function loop(time) {
             if (!star.update(ship.camX)) {
                 return false;
             }
+            if (currentLevel === 1){
             if (star.collidesWith(ship)) {
                 score += 100;
                 return false;
-            }
+            }}
+            if (currentLevel === 2){
+            if (star.collidesWith(ship)) {
+                score += 70;
+                return false;
+            }}
+            if (currentLevel === 3){
+            if (star.collidesWith(ship)) {
+                score += 60;
+                return false;
+            }}
+            if (currentLevel === 4){
+            if (star.collidesWith(ship)) {
+                score += 40;
+                return false;
+            }}
+            if (currentLevel === 5){
+            if (star.collidesWith(ship)) {
+                score += 20;
+                return false;
+            }}
+            if (currentLevel === 6){
+            if (star.collidesWith(ship)) {
+                score += 10;
+                return false;
+            }}
             star.draw(ctx);
             return true;
         });
     }
 
-    // Update & draw trail particles
     particles = particles.filter(p => {
         p.update();
         if (p.life <= 0) return false;
