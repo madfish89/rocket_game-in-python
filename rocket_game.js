@@ -13,8 +13,8 @@ const bg1 = new Audio('1.mp3');
 const bg2 = new Audio('2.mp3');
 const bg3 = new Audio('3.mp3');
 const bg4 = new Audio('4.mp3');
-const bg5 = new Audio('6.mp3');
-const bg6 = new Audio('5.mp3');
+const bg5 = new Audio('5.mp3');
+const bg6 = new Audio('6.mp3');
 
 const backgroundMusic = [bg1, bg2, bg3, bg4];
 backgroundMusic.forEach(track => { if (track) track.loop = true; });
