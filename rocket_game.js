@@ -543,7 +543,7 @@ function loop(timestamp) {
         ctx.textAlign = 'start';
     } else {
         ctx.font = `${smallFontSize}px Arial`;
-        ctx.fillText('Do not touch the ceiling and do not stay on the floor for too long', uiMarginX, canvas.height - 50 * GAME_SCALE);
+        ctx.fillText('Do not touch the ceiling and do not stay on the floor for too long', uiMarginX, canvas.height - 40 * GAME_SCALE);
         ctx.fillText('LEFT/RIGHT: Rotate | UP: Thrust', uiMarginX, canvas.height - 60 * GAME_SCALE);
     }
 
