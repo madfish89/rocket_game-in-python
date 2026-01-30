@@ -4,12 +4,17 @@ const BG_STAR_COUNT = 1070;
 const MAX_LEVEL = 6;
 const WIN_SCORE = 4200;
 const LEVEL_THRESHOLD = 700;
+const AVOID_SCORES = [20, 15, 12, 10, 8, 6];
+const COLLECT_SCORES = [100, 70, 60, 50, 40, 30];
+const FIXED_FRAME_TIME = 1000 / 60;
+const GROUND_TIME_LIMIT = 3500;
+
 const bg1 = new Audio('1.mp3');
 const bg2 = new Audio('2.mp3');
 const bg3 = new Audio('3.mp3');
 const bg4 = new Audio('4.mp3');
-let groundTimer = 0;
-const GROUND_TIME_LIMIT = 3500;
+const bg5 = new Audio('6.mp3');
+const bg6 = new Audio('5.mp3');
 
 const backgroundMusic = [bg1, bg2, bg3, bg4];
 backgroundMusic.forEach(track => { if (track) track.loop = true; });
@@ -17,28 +22,28 @@ backgroundMusic.forEach(track => { if (track) track.loop = true; });
 let hasStartedThrust = false;
 
 function play1() {
-    win1.currentTime = 0;
-    win1.play().catch(error => console.log(' failed:', error));
+    bg1.currentTime = 0;
+    bg1.play().catch(error => console.log(' failed:', error));
 }
 function play2() {
-    win2.currentTime = 0;
-    win2.play().catch(error => console.log(' failed:', error));
+    bg2.currentTime = 0;
+    bg2.play().catch(error => console.log(' failed:', error));
 }
 function play3() {
-    win3.currentTime = 0;
-    win3.play().catch(error => console.log(' failed:', error));
+    bg3.currentTime = 0;
+    bg3.play().catch(error => console.log(' failed:', error));
 }
 function play4() {
-    win4.currentTime = 0;
-    win4.play().catch(error => console.log(' failed:', error));
+    bg4.currentTime = 0;
+    bg4.play().catch(error => console.log(' failed:', error));
 }
 function play5() {
-    win5.currentTime = 0;
-    win5.play().catch(error => console.log(' failed:', error));
+    bg5.currentTime = 0;
+    bg5.play().catch(error => console.log(' failed:', error));
 }
 function play6() {
-    win6.currentTime = 0;
-    win6.play().catch(error => console.log(' failed:', error));
+    bg6.currentTime = 0;
+    bg6.play().catch(error => console.log(' failed:', error));
 }
 
 const LEVELS = [
@@ -82,17 +87,16 @@ class Ship {
         ];
     }
 
-    update(keys) {
-        const rotSpeed = 0.09;
+    update(keys, dt) {
+        const rotSpeed = 0.09 * dt;
         if (keys.ArrowLeft) this.angle -= rotSpeed;
         if (keys.ArrowRight) this.angle += rotSpeed;
 
         if (keys.ArrowUp) {
-            const thrust = 0.36;
+            const thrust = 0.36 * dt;
             this.vx += Math.cos(this.angle) * thrust;
             this.vy += Math.sin(this.angle) * thrust;
             this.thrusting = true;
-
 
             if (currentLevel === 1 && !hasStartedThrust) {
                 hasStartedThrust = true;
@@ -107,17 +111,17 @@ class Ship {
             this.thrusting = false;
         }
         //gravity
-        this.vy += 0.12;
+        this.vy += 0.12 * dt;
 
-        this.vx *= 0.991;
-        this.vy *= 0.991;
+        this.vx *= Math.pow(0.991, dt);
+        this.vy *= Math.pow(0.991, dt);
 
         const maxSpeed = 12 * VELOCITY_SCALE;
         this.vx = Math.max(-maxSpeed, Math.min(maxSpeed, this.vx));
         this.vy = Math.max(-maxSpeed, Math.min(maxSpeed, this.vy));
 
-        this.worldX += this.vx;
-        this.screenY += this.vy;
+        this.worldX += this.vx * dt;
+        this.screenY += this.vy * dt;
 
         this.camX = Math.max(0, this.worldX - innerWidth / 2);
         this.shipScreenX = this.worldX - this.camX;
@@ -190,8 +194,8 @@ class Star {
         this.screenX = 0;
     }
 
-    update(camX) {
-        this.worldX -= this.speed;
+    update(camX, dt) {
+        this.worldX -= this.speed * dt;
         this.screenX = this.worldX - camX;
         return this.screenX + this.size > 0;
     }
@@ -222,8 +226,8 @@ class Obstacle {
         this.screenX = 0;
     }
 
-    update(camX, speed) {
-        this.worldX -= speed;
+    update(camX, movement) {
+        this.worldX -= movement;
         this.screenX = this.worldX - camX;
         return this.screenX + this.width > 0;
     }
@@ -246,8 +250,6 @@ class Obstacle {
     }
 }
 
-let particles = [];
-
 class Particle {
     constructor(x, y, vx, vy, life, color) {
         this.x = x;
@@ -259,10 +261,10 @@ class Particle {
         this.color = color;
         this.size = 3.5 * GAME_SCALE;
     }
-    update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        this.life--;
+    update(dt) {
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        this.life -= dt;
     }
     draw(ctx) {
         ctx.globalAlpha = this.life / this.maxLife * 0.88;
@@ -272,11 +274,13 @@ class Particle {
     }
 }
 
+let particles = [];
+
 let ship, obstacles, stars, bgStars;
 let score = 0, lives = 1, currentLevel = 1;
 let obsSpawnTimer = 0, starSpawnTimer = 0;
-let gameOver = false, win = false, paused = false;
-let gameRunning = true;
+let groundTimer = 0;
+let gameOver = false, win = false, paused = false, gameRunning = true;
 
 function resetGame() {
     ship = new Ship();
@@ -325,7 +329,7 @@ function full_resetGame() {
     win = false;
     paused = false;
     gameRunning = true;
-    hasStartedThrust = false; // reset for new game
+    hasStartedThrust = false;
 }
 
 const canvas = document.createElement('canvas');
@@ -367,12 +371,13 @@ window.addEventListener('keyup', e => {
 });
 
 let lastTime = 0;
-function loop(time) {
+function loop(timestamp) {
     if (!gameRunning) return;
 
-    if (!lastTime) lastTime = time;
-    const dt = (time - lastTime) / 16.67;
-    lastTime = time;
+    if (lastTime === 0) lastTime = timestamp;
+    const deltaMs = timestamp - lastTime;
+    lastTime = timestamp;
+    const dt = deltaMs / FIXED_FRAME_TIME;
 
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -380,7 +385,7 @@ function loop(time) {
     const levelConfig = LEVELS[currentLevel - 1];
     ctx.fillStyle = levelConfig.bgStarColor;
     bgStars.forEach(star => {
-        star[0] -= star[2];
+        star[0] -= star[2] * dt;
         let sx = star[0] - ship.camX;
         if (sx < -10) {
             star[0] = ship.camX + canvas.width + Math.random() * 100;
@@ -391,7 +396,7 @@ function loop(time) {
     });
 
     if (!gameOver && !win && !paused) {
-        ship.update(keys);
+        ship.update(keys, dt);
 
         if (ship.screenY - ship.halfH <= 0) {
             lives--;
@@ -401,9 +406,9 @@ function loop(time) {
         const onGround = ship.screenY >= innerHeight - ship.halfH;
 
         if (onGround) {
-            groundTimer += (time - lastTime);
+            groundTimer += deltaMs;
             if (groundTimer >= GROUND_TIME_LIMIT) {
-                resetGame(); 
+                resetGame();
                 return;
             }
         } else {
@@ -415,9 +420,9 @@ function loop(time) {
         const emitY = ship.screenY + Math.sin(backAngle) * 22 * GAME_SCALE;
 
         const trailColor = ship.thrusting ? '#ffdd88' : '#bbddff';
-        const emitChance = ship.thrusting ? 2.2 : 1.1;
+        let emitAttempts = ship.thrusting ? 2.2 * dt : 1.1 * dt;
 
-        for (let i = 0; i < emitChance; i++) {
+        for (let i = 0; i < emitAttempts; i++) {
             if (Math.random() > 0.35) continue;
 
             const spread = 0.55;
@@ -432,59 +437,31 @@ function loop(time) {
             ));
         }
 
-        obsSpawnTimer += 0.82 * VELOCITY_SCALE;
-        let spawnRate = Math.max(42 - (currentLevel + .8) * 3.7, 16);
-        if (obsSpawnTimer > spawnRate) {
+        obsSpawnTimer += 0.82 * VELOCITY_SCALE * dt;
+        starSpawnTimer += 1.2 * VELOCITY_SCALE * dt;
+
+        let spawnRate = Math.max(42 - (currentLevel + 0.8) * 3.7, 16);
+        while (obsSpawnTimer >= spawnRate) {
             const spawnX = ship.camX + canvas.width + (Math.random() * 100 + 50);
             obstacles.push(new Obstacle(spawnX));
-            obsSpawnTimer = 0;
+            obsSpawnTimer -= spawnRate;
         }
 
-        starSpawnTimer += 1.2 * VELOCITY_SCALE;
-        const starSpawnThreshold = 75;
-        if (starSpawnTimer > starSpawnThreshold) {
+        const starThreshold = 75;
+        while (starSpawnTimer >= starThreshold) {
             const spawnX = ship.camX + canvas.width + (Math.random() * 300 + 100);
             stars.push(new Star(spawnX));
-            starSpawnTimer = 0;
+            starSpawnTimer -= starThreshold;
         }
 
-        const obsSpeed = (4.8 + currentLevel * 1.7) * VELOCITY_SCALE;
+        const obsMovementPerFrame = (4.8 + currentLevel * 1.7) * VELOCITY_SCALE;
+        const obsMovement = obsMovementPerFrame * dt;
+
         obstacles = obstacles.filter(obs => {
-            if (currentLevel === 1) {
-                if (!obs.update(ship.camX, obsSpeed)) {
-                    score += 20;
-                    return false;
-                }
-            }
-            if (currentLevel === 2) {
-                if (!obs.update(ship.camX, obsSpeed)) {
-                    score += 15;
-                    return false;
-                }
-            }
-            if (currentLevel === 3) {
-                if (!obs.update(ship.camX, obsSpeed)) {
-                    score += 12;
-                    return false;
-                }
-            }
-            if (currentLevel === 4) {
-                if (!obs.update(ship.camX, obsSpeed)) {
-                    score += 10;
-                    return false;
-                }
-            }
-            if (currentLevel === 5) {
-                if (!obs.update(ship.camX, obsSpeed)) {
-                    score += 8;
-                    return false;
-                }
-            }
-            if (currentLevel === 6) {
-                if (!obs.update(ship.camX, obsSpeed)) {
-                    score += 6;
-                    return false;
-                }
+            const stillVisible = obs.update(ship.camX, obsMovement);
+            if (!stillVisible) {
+                score += AVOID_SCORES[currentLevel - 1];
+                return false;
             }
             if (obs.collidesWith(ship)) {
                 lives--;
@@ -496,44 +473,13 @@ function loop(time) {
         });
 
         stars = stars.filter(star => {
-            if (!star.update(ship.camX)) {
+            const stillVisible = star.update(ship.camX, dt);
+            if (!stillVisible) {
                 return false;
             }
-            if (currentLevel === 1) {
-                if (star.collidesWith(ship)) {
-                    score += 100;
-                    return false;
-                }
-            }
-            if (currentLevel === 2) {
-                if (star.collidesWith(ship)) {
-                    score += 70;
-                    return false;
-                }
-            }
-            if (currentLevel === 3) {
-                if (star.collidesWith(ship)) {
-                    score += 60;
-                    return false;
-                }
-            }
-            if (currentLevel === 4) {
-                if (star.collidesWith(ship)) {
-                    score += 50;
-                    return false;
-                }
-            }
-            if (currentLevel === 5) {
-                if (star.collidesWith(ship)) {
-                    score += 40;
-                    return false;
-                }
-            }
-            if (currentLevel === 6) {
-                if (star.collidesWith(ship)) {
-                    score += 30;
-                    return false;
-                }
+            if (star.collidesWith(ship)) {
+                score += COLLECT_SCORES[currentLevel - 1];
+                return false;
             }
             star.draw(ctx);
             return true;
@@ -541,7 +487,7 @@ function loop(time) {
     }
 
     particles = particles.filter(p => {
-        p.update();
+        p.update(dt);
         if (p.life <= 0) return false;
         p.draw(ctx);
         return true;
@@ -549,7 +495,6 @@ function loop(time) {
 
     const newLevel = Math.min(1 + Math.floor(score / LEVEL_THRESHOLD), MAX_LEVEL);
     if (newLevel > currentLevel) {
-
         currentLevel = newLevel;
         VELOCITY_SCALE = 0.41 + (currentLevel - 1) * 0.07;
         bgStars = Array.from({ length: BG_STAR_COUNT }, () => [
@@ -563,7 +508,6 @@ function loop(time) {
     if (score >= WIN_SCORE) win = true;
 
     ship.draw(ctx);
-
 
     const fontSize = Math.floor(canvas.height / 20 * GAME_SCALE);
     const smallFontSize = Math.floor(canvas.height / 35 * GAME_SCALE);
@@ -604,7 +548,6 @@ function loop(time) {
     }
 
     requestAnimationFrame(loop);
-
 }
 resetGame();
 requestAnimationFrame(loop);
