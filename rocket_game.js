@@ -408,8 +408,7 @@ function loop(timestamp) {
         if (onGround) {
             groundTimer += deltaMs;
             if (groundTimer >= GROUND_TIME_LIMIT) {
-                resetGame();
-                return;
+                gameOver = true;
             }
         } else {
             groundTimer = 0;
