@@ -16,7 +16,7 @@ const bg4 = new Audio('4.mp3');
 const bg5 = new Audio('5.mp3');
 const bg6 = new Audio('6.mp3');
 
-const backgroundMusic = [bg1, bg2, bg3, bg4];
+const backgroundMusic = [bg1, bg2, bg3, bg4, bg5, bg6];
 backgroundMusic.forEach(track => { if (track) track.loop = true; });
 
 let hasStartedThrust = false;
